@@ -11,7 +11,7 @@ export const personalInfo = {
   email: "vijayceg28@gmail.com",
   linkedin: "https://www.linkedin.com/in/vijay-e-/",
   github: "https://github.com/vijay-tech-colab",
-  resumeUrl: "/Vijay_E_QA_Resume.pdf", // Place resume PDF in /public folder
+  resumeUrl: "./Vijay_E_QA_Resume.pdf", // Place resume PDF in /public folder
 };
 
 export const skills = [
