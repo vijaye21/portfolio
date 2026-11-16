@@ -72,7 +72,7 @@ export default function Skills() {
               <button
                 key={tab}
                 onClick={() => setSelectedFilter(tab)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
                   selectedFilter === tab
                     ? 'bg-sky-500/20 text-sky-400 border border-sky-400/40'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'

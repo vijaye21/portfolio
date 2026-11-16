@@ -35,9 +35,9 @@ export default function Workflow() {
             {/* Animated pulse on line */}
             <div className="absolute top-[27px] left-[40px] right-[40px] h-0.5 overflow-hidden z-0">
               <motion.div
-                className="h-full w-16 bg-gradient-to-r from-transparent via-sky-400 to-transparent"
-                animate={{ x: ['calc(-100%)', 'calc(100vw)'] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
+                className="h-full w-20 bg-gradient-to-r from-transparent via-sky-400 to-transparent"
+                animate={{ x: ['-100%', '1000%'] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
               />
             </div>
 
@@ -54,11 +54,10 @@ export default function Workflow() {
               >
                 {/* Node */}
                 <div
-                  className={`w-14 h-14 rounded-full border-2 flex items-center justify-center text-xl transition-all duration-300 ${
-                    activeStage === i
-                      ? 'scale-110 shadow-lg'
-                      : 'group-hover:scale-105'
-                  }`}
+                  className={`w-14 h-14 rounded-full border-2 flex items-center justify-center text-xl transition-all duration-300 ${activeStage === i
+                    ? 'scale-110 shadow-lg'
+                    : 'group-hover:scale-105'
+                    }`}
                   style={{
                     background:
                       activeStage === i ? stage.color + '25' : 'rgba(2,8,23,0.9)',

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Send, AlertCircle } from 'lucide-react';
+import { Mail, MapPin, Send, AlertCircle, CheckCircle2, Copy, ExternalLink } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './SocialIcons';
 import { personalInfo } from '../data/portfolioData';
 import { SectionHeader } from './About';
@@ -12,7 +12,7 @@ type FormState = {
   message: string;
 };
 
-type Status = 'idle' | 'submitting' | 'info';
+type Status = 'idle' | 'submitting' | 'sent';
 
 const contactLinks = [
   {
@@ -40,7 +40,7 @@ const contactLinks = [
     icon: MapPin,
     label: 'Location',
     value: personalInfo.location,
-    href: '#',
+    href: 'https://maps.google.com/?q=Tiruppur,+Tamil+Nadu,+India',
     color: '#10b981',
   },
 ];
@@ -50,7 +50,7 @@ function validate(form: FormState) {
   if (!form.name.trim()) errors.name = 'Name is required';
   if (!form.email.trim()) errors.email = 'Email is required';
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-    errors.email = 'Please enter a valid email';
+    errors.email = 'Please enter a valid email address';
   if (!form.subject.trim()) errors.subject = 'Subject is required';
   if (!form.message.trim()) errors.message = 'Message is required';
   else if (form.message.trim().length < 10)
@@ -62,6 +62,7 @@ export default function Contact() {
   const [form, setForm] = useState<FormState>({ name: '', email: '', subject: '', message: '' });
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [status, setStatus] = useState<Status>('idle');
+  const [copied, setCopied] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -69,6 +70,11 @@ export default function Contact() {
     if (errors[name as keyof FormState]) {
       setErrors((er) => ({ ...er, [name]: undefined }));
     }
+  };
+
+  const getMailtoUrl = () => {
+    const bodyContent = `From: ${form.name} (${form.email})\n\n${form.message}`;
+    return `mailto:${personalInfo.email}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(bodyContent)}`;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -79,10 +85,19 @@ export default function Contact() {
       return;
     }
     setStatus('submitting');
-    // Simulate network delay — then show info that no backend is configured
+
     setTimeout(() => {
-      setStatus('info');
-    }, 800);
+      // Trigger default mail client
+      const mailtoUrl = getMailtoUrl();
+      window.location.href = mailtoUrl;
+      setStatus('sent');
+    }, 450);
+  };
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(personalInfo.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleReset = () => {
@@ -92,8 +107,8 @@ export default function Contact() {
   };
 
   const fieldClass = (field: keyof FormState) =>
-    `w-full bg-white/5 border rounded-xl px-4 py-3 text-white text-sm placeholder-slate-500 outline-none transition-all focus:bg-white/8 focus:border-sky-400/60 ${
-      errors[field] ? 'border-red-400/60 bg-red-400/5' : 'border-white/10'
+    `w-full bg-white/5 border rounded-xl px-4 py-3 text-white text-sm placeholder-slate-500 outline-none transition-all focus:bg-white/10 focus:border-sky-400/70 ${
+      errors[field] ? 'border-red-400/60 bg-red-400/5' : 'border-white/10 hover:border-white/20'
     }`;
 
   return (
@@ -114,11 +129,11 @@ export default function Contact() {
               <span className="gradient-text">Software Together</span>
             </>
           }
-          subtitle="Have a QA challenge, internship opportunity, or just want to connect? I'd love to hear from you."
+          subtitle="Have a QA opportunity, test automation project, or inquiry? Reach out directly via the form or email."
         />
 
-        <div className="grid lg:grid-cols-5 gap-10">
-          {/* Contact Info */}
+        <div className="grid lg:grid-cols-5 gap-8 lg:gap-10">
+          {/* Contact Details Column */}
           <div className="lg:col-span-2 flex flex-col gap-4">
             {contactLinks.map(({ icon: Icon, label, value, href, color }) => (
               <motion.a
@@ -129,79 +144,96 @@ export default function Contact() {
                 href={href}
                 target={href.startsWith('http') ? '_blank' : undefined}
                 rel="noopener noreferrer"
-                className="glass-card p-4 flex items-center gap-4 hover:border-sky-400/30 transition-all group"
+                className="glass-card p-4 flex items-center gap-4 hover:border-sky-400/40 transition-all group"
                 id={`contact-${label.toLowerCase()}`}
               >
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
+                  className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
                   style={{ background: color + '15' }}
                 >
                   <Icon size={18} style={{ color }} />
                 </div>
-                <div className="overflow-hidden">
-                  <div className="text-slate-400 text-xs mb-0.5">{label}</div>
-                  <div className="text-white text-sm font-medium truncate">{value}</div>
+                <div className="overflow-hidden min-w-0 flex-1">
+                  <div className="text-slate-400 text-xs font-mono mb-0.5">{label}</div>
+                  <div className="text-white text-sm font-semibold truncate group-hover:text-sky-300 transition-colors">
+                    {value}
+                  </div>
                 </div>
               </motion.a>
             ))}
 
+            {/* Availability Status Card */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.35 }}
-              className="glass-card p-4 mt-2"
+              transition={{ delay: 0.2 }}
+              className="glass-card p-5 mt-1 border-emerald-500/20"
             >
-              <p className="text-slate-400 text-xs font-mono mb-1">// availability</p>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <p className="text-slate-300 text-sm">Open to QA / testing roles &amp; internships</p>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold">
+                  Opportunity Status
+                </span>
               </div>
+              <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                Actively interviewing for full-time QA Engineer, SDET, and AI Testing roles. Open to immediate start.
+              </p>
+              <button
+                onClick={handleCopyEmail}
+                className="text-xs font-mono text-sky-400 hover:text-sky-300 flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Copy size={13} />
+                <span>{copied ? 'Copied to clipboard!' : `Copy: ${personalInfo.email}`}</span>
+              </button>
             </motion.div>
           </div>
 
-          {/* Contact Form */}
+          {/* Contact Form Column */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
             className="lg:col-span-3 glass-card p-6 sm:p-8"
           >
-            {status === 'info' ? (
+            {status === 'sent' ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-8">
-                <div className="w-16 h-16 rounded-full bg-amber-500/15 flex items-center justify-center mb-4">
-                  <AlertCircle size={32} className="text-amber-400" />
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-4 text-emerald-400 shadow-lg shadow-emerald-500/20">
+                  <CheckCircle2 size={32} />
                 </div>
-                <h3 className="font-outfit font-bold text-white text-xl mb-2">No Backend Connected</h3>
-                <p className="text-slate-400 text-sm leading-relaxed max-w-sm mb-2">
-                  Your message was validated but <strong className="text-white">was not sent</strong> — this
-                  portfolio does not yet have a backend or email integration.
+                <h3 className="font-outfit font-bold text-white text-2xl mb-2">Message Dispatched!</h3>
+                <p className="text-slate-300 text-sm leading-relaxed max-w-md mb-6">
+                  Your message has been formatted. If your default email application did not launch automatically, you can open it directly or send an email to <strong className="text-sky-400">{personalInfo.email}</strong>.
                 </p>
-                <p className="text-slate-500 text-xs mb-6 font-mono">
-                  To enable email: connect Formspree, EmailJS, or a serverless function.
-                </p>
-                <p className="text-slate-400 text-sm mb-6">
-                  In the meantime, reach me directly at{' '}
+
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <a
-                    href={`mailto:${personalInfo.email}`}
-                    className="text-sky-400 hover:underline"
+                    href={getMailtoUrl()}
+                    className="h-11 px-6 rounded-full text-xs font-semibold bg-gradient-to-r from-sky-500 to-cyan-500 text-white flex items-center gap-2 shadow-lg shadow-sky-500/20 hover:shadow-sky-500/35 transition-all"
                   >
-                    {personalInfo.email}
+                    <span>Open in Email App</span>
+                    <ExternalLink size={14} />
                   </a>
-                </p>
-                <button onClick={handleReset} className="btn-outline text-sm py-2 px-6">
-                  Compose Again
-                </button>
+                  <button
+                    onClick={handleReset}
+                    className="h-11 px-6 rounded-full text-xs font-semibold border border-white/10 hover:border-white/20 text-slate-300 hover:text-white transition-all cursor-pointer"
+                  >
+                    Send Another Message
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate>
-                <h3 className="font-outfit font-bold text-white text-xl mb-6">Send a Message</h3>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-outfit font-bold text-white text-xl">Send a Message</h3>
+                  <span className="text-[11px] font-mono text-slate-500">* Required fields</span>
+                </div>
 
                 <div className="grid sm:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label htmlFor="contact-name" className="text-slate-400 text-xs mb-1.5 block font-mono">
-                      Name *
+                    <label htmlFor="contact-name" className="text-slate-300 text-xs mb-1.5 block font-mono">
+                      Your Name *
                     </label>
                     <input
                       id="contact-name"
@@ -209,19 +241,20 @@ export default function Contact() {
                       type="text"
                       value={form.name}
                       onChange={handleChange}
-                      placeholder="Your full name"
+                      placeholder="e.g. Alex Smith"
                       className={fieldClass('name')}
                       autoComplete="name"
                     />
                     {errors.name && (
-                      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle size={11} /> {errors.name}
+                      <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1 font-mono">
+                        <AlertCircle size={12} /> {errors.name}
                       </p>
                     )}
                   </div>
+
                   <div>
-                    <label htmlFor="contact-email" className="text-slate-400 text-xs mb-1.5 block font-mono">
-                      Email *
+                    <label htmlFor="contact-email" className="text-slate-300 text-xs mb-1.5 block font-mono">
+                      Your Email *
                     </label>
                     <input
                       id="contact-email"
@@ -229,20 +262,20 @@ export default function Contact() {
                       type="email"
                       value={form.email}
                       onChange={handleChange}
-                      placeholder="your@email.com"
+                      placeholder="e.g. alex@company.com"
                       className={fieldClass('email')}
                       autoComplete="email"
                     />
                     {errors.email && (
-                      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle size={11} /> {errors.email}
+                      <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1 font-mono">
+                        <AlertCircle size={12} /> {errors.email}
                       </p>
                     )}
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="contact-subject" className="text-slate-400 text-xs mb-1.5 block font-mono">
+                  <label htmlFor="contact-subject" className="text-slate-300 text-xs mb-1.5 block font-mono">
                     Subject *
                   </label>
                   <input
@@ -251,18 +284,18 @@ export default function Contact() {
                     type="text"
                     value={form.subject}
                     onChange={handleChange}
-                    placeholder="What is this about?"
+                    placeholder="e.g. QA Engineer Opportunity / Project Inquiry"
                     className={fieldClass('subject')}
                   />
                   {errors.subject && (
-                    <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle size={11} /> {errors.subject}
+                    <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1 font-mono">
+                      <AlertCircle size={12} /> {errors.subject}
                     </p>
                   )}
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="contact-message" className="text-slate-400 text-xs mb-1.5 block font-mono">
+                  <label htmlFor="contact-message" className="text-slate-300 text-xs mb-1.5 block font-mono">
                     Message *
                   </label>
                   <textarea
@@ -271,12 +304,12 @@ export default function Contact() {
                     rows={5}
                     value={form.message}
                     onChange={handleChange}
-                    placeholder="Your message..."
+                    placeholder="Share project details, team requirements, or your query..."
                     className={`${fieldClass('message')} resize-none`}
                   />
                   {errors.message && (
-                    <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle size={11} /> {errors.message}
+                    <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1 font-mono">
+                      <AlertCircle size={12} /> {errors.message}
                     </p>
                   )}
                 </div>
@@ -285,17 +318,17 @@ export default function Contact() {
                   type="submit"
                   id="contact-submit"
                   disabled={status === 'submitting'}
-                  className="btn-primary flex items-center gap-2 w-full sm:w-auto justify-center disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="h-11 px-7 rounded-full text-xs sm:text-sm font-semibold bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {status === 'submitting' ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Sending...
+                      <span>Formatting Message...</span>
                     </>
                   ) : (
                     <>
                       <Send size={15} />
-                      Send Message
+                      <span>Send Message</span>
                     </>
                   )}
                 </button>

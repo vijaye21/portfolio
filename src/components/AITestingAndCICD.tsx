@@ -199,29 +199,29 @@ export default function AITestingAndCICD() {
         />
 
         {/* Tab switch buttons */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex p-1.5 rounded-2xl glass-card border-white/10 bg-[#030712]/80 backdrop-blur-md">
+        <div className="flex justify-center mb-8 px-2">
+          <div className="inline-flex flex-col sm:flex-row p-1.5 rounded-2xl glass-card border-white/10 bg-[#030712]/80 backdrop-blur-md w-full sm:w-auto gap-1">
             <button
               onClick={() => setActiveTab('ai')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-outfit text-sm font-semibold transition-all ${
+              className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-outfit text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                 activeTab === 'ai'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Sparkles size={16} />
-              AI Testing (Promptfoo &amp; Ragas)
+              <Sparkles size={15} />
+              <span>AI Testing (Promptfoo &amp; Ragas)</span>
             </button>
             <button
               onClick={() => setActiveTab('cicd')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-outfit text-sm font-semibold transition-all ${
+              className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-outfit text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                 activeTab === 'cicd'
                   ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-500/25'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Cpu size={16} />
-              CI/CD (GitHub Actions, Docker, K8s)
+              <Cpu size={15} />
+              <span>CI/CD (GitHub Actions, Docker, K8s)</span>
             </button>
           </div>
         </div>

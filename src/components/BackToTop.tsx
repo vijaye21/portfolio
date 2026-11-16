@@ -22,7 +22,7 @@ export default function BackToTop() {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           id="back-to-top"
           aria-label="Back to top"
-          className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full glass-card border-sky-400/30 flex items-center justify-center hover:bg-sky-400/20 hover:border-sky-400/60 transition-all group shadow-lg"
+          className="fixed bottom-6 right-4 sm:right-6 z-40 w-11 h-11 rounded-full glass-card border-sky-400/30 flex items-center justify-center hover:bg-sky-400/20 hover:border-sky-400/60 transition-all group shadow-lg shadow-black/50 cursor-pointer"
         >
           <ArrowUp size={16} className="text-sky-400 group-hover:text-sky-300 transition-colors" />
         </motion.button>

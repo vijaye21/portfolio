@@ -75,17 +75,12 @@ export default function Education() {
                           {edu.period}
                         </span>
                         <span
-                          className="font-mono text-xs px-2 py-0.5 rounded"
+                          className="font-mono text-xs px-2 py-0.5 rounded font-medium"
                           style={{ background: color + '15', color: color + 'cc' }}
                         >
                           {edu.grade}
                         </span>
                       </div>
-                      {edu.institution.startsWith('[') && (
-                        <p className="text-xs text-amber-400 mt-2 font-mono">
-                          ✏️ Update this entry in portfolioData.ts
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>

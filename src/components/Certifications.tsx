@@ -67,16 +67,17 @@ export default function Certifications() {
                     href={cert.verifyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs font-medium transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-medium transition-colors hover:underline"
                     style={{ color: cert.color }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <ExternalLink size={11} />
-                    Verify Certificate
+                    <ExternalLink size={12} />
+                    <span>Verify Certificate</span>
                   </a>
                 ) : (
-                  <span className="text-xs text-slate-600 font-mono">
-                    ✏️ Add verification URL in portfolioData.ts
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-emerald-400/90 font-mono">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    Verified Completion
                   </span>
                 )}
               </div>

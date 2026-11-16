@@ -49,8 +49,9 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         </div>
 
         {/* Status badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono mb-6">
-          ✏️ {project.status}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/25 text-sky-400 text-xs font-mono mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+          {project.status}
         </div>
 
         <div className="space-y-5">
